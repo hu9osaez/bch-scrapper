@@ -9,19 +9,19 @@ export interface ProcessedData {
 }
 
 export class ExcelProcessor {
-  private filePath: string
+  private buffer: Buffer
 
-  constructor(filePath: string) {
-    this.filePath = filePath
+  constructor(buffer: Buffer) {
+    this.buffer = buffer
   }
 
   /**
    * Procesa el archivo Excel y convierte los datos a CSV
    * Busca la fila con 'Movimientos al' y extrae 100 registros desde columnas B-G
    */
-    async processExcelToCSV(): Promise<ProcessedData> {
+      async processExcelToCSV(): Promise<ProcessedData> {
     try {
-      const workbook = this.readExcelFile()
+      const workbook = this.readExcelFromBuffer()
       const firstSheet = this.getFirstSheet(workbook)
       const movimientosRowIndex = this.findMovimientosRow(firstSheet)
       const headers = this.extractHeaders(firstSheet, movimientosRowIndex)
@@ -40,15 +40,14 @@ export class ExcelProcessor {
     }
   }
 
-  /**
-   * Lee el archivo Excel desde el sistema de archivos
+    /**
+   * Lee el archivo Excel desde buffer en memoria
    */
-    private readExcelFile(): XLSX.WorkBook {
+  private readExcelFromBuffer(): XLSX.WorkBook {
     try {
-      const fileBuffer = readFileSync(this.filePath)
-      return XLSX.read(fileBuffer, { type: 'buffer' })
+      return XLSX.read(this.buffer, { type: 'buffer' })
     } catch (error) {
-      throw new Error(`Error leyendo archivo Excel: ${error instanceof Error ? error.message : String(error)}`)
+      throw new Error(`Error leyendo Excel desde buffer: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -172,8 +171,17 @@ export class ExcelProcessor {
   /**
    * Guarda el contenido CSV en un archivo
    */
-    private saveCsvFile(csvContent: string): string {
-    const csvFileName = this.filePath.replace(/\.(xlsx?|xls)$/i, '.csv')
+      private saveCsvFile(csvContent: string): string {
+    // Generar nombre con formato cartola-DDMMYYY--HHmmss.csv
+    const now = new Date()
+    const day = String(now.getDate()).padStart(2, '0')
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const year = now.getFullYear()
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
+
+    const csvFileName = `cartola-${day}${month}${year}--${hours}${minutes}${seconds}.csv`
     const csvPath = join(process.cwd(), csvFileName)
 
     writeFileSync(csvPath, csvContent, 'utf8')
@@ -182,10 +190,19 @@ export class ExcelProcessor {
   }
 
   /**
-   * Método estático para procesar un archivo Excel directamente
+   * Método estático para procesar un archivo Excel desde archivo
    */
   static async processFile(filePath: string): Promise<ProcessedData> {
-    const processor = new ExcelProcessor(filePath)
+    const fileBuffer = readFileSync(filePath)
+    const processor = new ExcelProcessor(fileBuffer)
+    return processor.processExcelToCSV()
+  }
+
+  /**
+   * Método estático para procesar un Excel desde buffer
+   */
+  static async processBuffer(buffer: Buffer): Promise<ProcessedData> {
+    const processor = new ExcelProcessor(buffer)
     return processor.processExcelToCSV()
   }
 }

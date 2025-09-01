@@ -118,11 +118,20 @@ async function main() {
 
     try {
       const download = await downloadPromise;
-      await download.saveAs('descarga.xls');
-      console.log('✅ Archivo Excel descargado');
 
-      // Procesar Excel y convertir a CSV
-      const processedData = await ExcelProcessor.processFile('descarga.xls');
+      // Obtener el contenido como buffer sin guardarlo en disco
+      const stream = await download.createReadStream();
+      const chunks: Buffer[] = [];
+
+      for await (const chunk of stream) {
+        chunks.push(chunk);
+      }
+
+      const excelBuffer = Buffer.concat(chunks);
+      console.log('✅ Contenido Excel obtenido en memoria');
+
+      // Procesar Excel desde buffer y convertir a CSV
+      const processedData = await ExcelProcessor.processBuffer(excelBuffer);
       console.log(`✅ Procesamiento completado - ${processedData.rows.length} registros procesados`);
 
     } catch (downloadError) {
