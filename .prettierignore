@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+
+# Screenshots and downloads
+*.png
+*.jpg
+*.jpeg
+*.xls
+*.xlsx
+*.csv
+
+# Package files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Coverage reports
+coverage/

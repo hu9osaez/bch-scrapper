@@ -19,7 +19,7 @@ export class ExcelProcessor {
    * Procesa el archivo Excel y convierte los datos a CSV
    * Busca la fila con 'Movimientos al' y extrae 100 registros desde columnas B-G
    */
-      async processExcelToCSV(): Promise<ProcessedData> {
+  async processExcelToCSV(): Promise<ProcessedData> {
     try {
       const workbook = this.readExcelFromBuffer()
       const firstSheet = this.getFirstSheet(workbook)
@@ -32,29 +32,32 @@ export class ExcelProcessor {
       return {
         headers,
         rows: dataRows,
-        csvContent
+        csvContent,
       }
-
     } catch (error) {
-      throw new Error(`Error procesando Excel: ${error instanceof Error ? error.message : String(error)}`)
+      throw new Error(
+        `Error procesando Excel: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   }
 
-    /**
+  /**
    * Lee el archivo Excel desde buffer en memoria
    */
   private readExcelFromBuffer(): XLSX.WorkBook {
     try {
       return XLSX.read(this.buffer, { type: 'buffer' })
     } catch (error) {
-      throw new Error(`Error leyendo Excel desde buffer: ${error instanceof Error ? error.message : String(error)}`)
+      throw new Error(
+        `Error leyendo Excel desde buffer: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
   }
 
   /**
    * Obtiene la primera hoja del workbook
    */
-      private getFirstSheet(workbook: XLSX.WorkBook): XLSX.WorkSheet {
+  private getFirstSheet(workbook: XLSX.WorkBook): XLSX.WorkSheet {
     const firstSheetName = workbook.SheetNames[0]
     if (!firstSheetName) {
       throw new Error('No se encontraron hojas en el archivo Excel')
@@ -71,7 +74,7 @@ export class ExcelProcessor {
   /**
    * Busca la fila que contiene 'Movimientos al'
    */
-    private findMovimientosRow(sheet: XLSX.WorkSheet): number {
+  private findMovimientosRow(sheet: XLSX.WorkSheet): number {
     const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:Z100')
 
     for (let row = range.s.r; row <= range.e.r; row++) {
@@ -94,7 +97,7 @@ export class ExcelProcessor {
   /**
    * Extrae los headers desde la fila siguiente a 'Movimientos al' (columnas B-G)
    */
-    private extractHeaders(sheet: XLSX.WorkSheet, movimientosRowIndex: number): string[] {
+  private extractHeaders(sheet: XLSX.WorkSheet, movimientosRowIndex: number): string[] {
     const headersRow = movimientosRowIndex + 1
     const headers: string[] = []
 
@@ -103,7 +106,8 @@ export class ExcelProcessor {
       const cellAddress = XLSX.utils.encode_cell({ r: headersRow, c: col })
       const cell = sheet[cellAddress]
 
-      const headerValue = cell && cell.v ? String(cell.v).trim() : `Columna_${String.fromCodePoint(65 + col)}`
+      const headerValue =
+        cell && cell.v ? String(cell.v).trim() : `Columna_${String.fromCodePoint(65 + col)}`
       headers.push(headerValue)
     }
 
@@ -113,7 +117,11 @@ export class ExcelProcessor {
   /**
    * Extrae 100 registros de datos desde la fila después de los headers
    */
-    private extractDataRows(sheet: XLSX.WorkSheet, movimientosRowIndex: number, numColumns: number): string[][] {
+  private extractDataRows(
+    sheet: XLSX.WorkSheet,
+    movimientosRowIndex: number,
+    numColumns: number
+  ): string[][] {
     const dataStartRow = movimientosRowIndex + 2
     const dataRows: string[][] = []
 
@@ -141,7 +149,7 @@ export class ExcelProcessor {
   /**
    * Convierte headers y datos a formato CSV
    */
-    private convertToCSV(headers: string[], dataRows: string[][]): string {
+  private convertToCSV(headers: string[], dataRows: string[][]): string {
     const csvLines: string[] = []
 
     csvLines.push(this.escapeCSVRow(headers))
@@ -157,21 +165,28 @@ export class ExcelProcessor {
    * Escapa una fila para formato CSV (maneja comas, comillas, etc.)
    */
   private escapeCSVRow(row: string[]): string {
-    return row.map(cell => {
-      // Si la celda contiene comas, comillas o saltos de línea, la envolvemos en comillas
-      if (cell.includes(',') || cell.includes('"') || cell.includes('\n') || cell.includes('\r')) {
-        // Escapar comillas duplicándolas
-        const escapedCell = cell.replace(/"/g, '""')
-        return `"${escapedCell}"`
-      }
-      return cell
-    }).join(',')
+    return row
+      .map(cell => {
+        // Si la celda contiene comas, comillas o saltos de línea, la envolvemos en comillas
+        if (
+          cell.includes(',') ||
+          cell.includes('"') ||
+          cell.includes('\n') ||
+          cell.includes('\r')
+        ) {
+          // Escapar comillas duplicándolas
+          const escapedCell = cell.replace(/"/g, '""')
+          return `"${escapedCell}"`
+        }
+        return cell
+      })
+      .join(',')
   }
 
   /**
    * Guarda el contenido CSV en un archivo
    */
-      private saveCsvFile(csvContent: string): string {
+  private saveCsvFile(csvContent: string): string {
     // Generar nombre con formato cartola-DDMMYYY--HHmmss.csv
     const now = new Date()
     const day = String(now.getDate()).padStart(2, '0')

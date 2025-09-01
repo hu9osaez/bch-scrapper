@@ -1,15 +1,10 @@
 {
-  "name": "packageName",
-  "version": "0.0.0",
+  "name": "bch-scrapper",
+  "version": "0.0.1",
   "description": "",
-  "repository": "unjs/packageName",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "exports": {
-    ".": "./dist/index.mjs"
-  },
-  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
@@ -18,40 +13,28 @@
     "dev": "tsx watch src/index.ts",
     "lint": "eslint . && prettier -c .",
     "lint:fix": "automd && eslint . --fix && prettier -w .",
-    "prepack": "pnpm build",
-    "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
-    "test": "pnpm lint && pnpm test:types && vitest run --coverage",
-    "test:types": "tsc --noEmit --skipLibCheck"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "release": "changelogen --release && npm publish && git push --follow-tags"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@types/random-useragent": "^0.3.3",
-    "@vitest/coverage-v8": "^3.2.4",
     "automd": "^0.4.0",
     "changelogen": "^0.6.2",
     "eslint": "^9.33.0",
     "eslint-config-unjs": "^0.5.0",
-    "obuild": "^0.2.1",
     "prettier": "^3.6.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "obuild": "^0.2.1"
   },
-  "packageManager": "pnpm@10.15.0",
   "dependencies": {
     "@types/xlsx": "^0.0.35",
-    "c12": "^3.2.0",
     "consola": "^3.4.2",
-    "defu": "^6.1.4",
     "dotenv": "^17.2.1",
-    "ofetch": "^1.4.1",
     "playwright": "^1.55.0",
     "playwright-extra": "^4.3.6",
-    "playwright-extra-plugin-stealth": "^0.0.1",
-    "puppeteer": "^24.17.1",
-    "puppeteer-core": "^24.17.1",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-recaptcha": "^3.6.8",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "random-useragent": "^0.5.0",
     "xlsx": "^0.18.5"

@@ -25,13 +25,13 @@ Import:
 **ESM** (Node.js, Bun, Deno)
 
 ```js
-import {} from "pkg";
+import {} from 'pkg'
 ```
 
 **CDN** (Deno, Bun and Browsers)
 
 ```js
-import {} from "https://esm.sh/pkg";
+import {} from 'https://esm.sh/pkg'
 ```
 
 <!-- /automd -->
