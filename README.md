@@ -1,72 +1,81 @@
-# packageName
+# BCH Scraper
 
-<!-- automd:badges color=yellow -->
+Automatización para descargar y procesar cartolas del Banco de Chile, convirtiendo archivos Excel a CSV con formato estructurado.
 
-[![npm version](https://img.shields.io/npm/v/packageName?color=yellow)](https://npmjs.com/package/packageName)
-[![npm downloads](https://img.shields.io/npm/dm/packageName?color=yellow)](https://npm.chart.dev/packageName)
+## 🚀 Características
 
-<!-- /automd -->
+- **Login automático** al portal del Banco de Chile
+- **Descarga automática** de cartolas en formato Excel
+- **Procesamiento en memoria** (sin archivos temporales)
+- **Conversión a CSV** con nombres timestamped
+- **Extracción inteligente** de datos desde columnas B-G
+- **Anti-detección** con Playwright + Stealth
 
-This is my package description.
+## 📋 Requisitos
 
-## Usage
+- Node.js 18+
+- Credenciales del Banco de Chile
+- Variables de entorno configuradas
 
-Install the package:
+## ⚙️ Instalación
 
-```sh
-# ✨ Auto-detect (supports npm, yarn, pnpm, deno and bun)
-npx nypm install packageName
+```bash
+npm install
 ```
 
-Import:
+## 🔧 Configuración
 
-<!-- automd:jsimport cdn name="pkg" -->
+Crear archivo `.env` con tus credenciales:
 
-**ESM** (Node.js, Bun, Deno)
-
-```js
-import {} from 'pkg'
+```env
+BCH_RUT=12345678-9
+BCH_PASSWORD=tu_password
 ```
 
-**CDN** (Deno, Bun and Browsers)
+## 🏃‍♂️ Uso
 
-```js
-import {} from 'https://esm.sh/pkg'
+```bash
+# Ejecutar scraper
+npm run dev
+
+# Formatear código
+npm run format
+
+# Verificar linting
+npm run lint
 ```
 
-<!-- /automd -->
+## 📊 Salida
 
-## Development
+El scraper genera archivos CSV con formato:
+- **Nombre**: `cartola-DDMMYYYY--HHmmss.csv`
+- **Contenido**: Headers + hasta 100 registros de movimientos
+- **Columnas**: Datos extraídos desde columnas B-G del Excel
 
-<details>
+## 🛠️ Tecnologías
 
-<summary>local development</summary>
+- **Playwright** - Automatización del navegador
+- **Stealth Plugin** - Evasión de detección
+- **XLSX** - Procesamiento de archivos Excel
+- **TypeScript** - Tipado estático
+- **Prettier** - Formateo de código
 
-- Clone this repository
-- Install latest LTS version of [Node.js](https://nodejs.org/en/)
-- Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable`
-- Install dependencies using `pnpm install`
-- Run interactive tests using `pnpm dev`
+## 📝 Estructura
 
-</details>
+```
+src/
+├── index.ts              # Script principal
+└── lib/
+    ├── excel-processor.ts # Procesador Excel → CSV
+    └── anti-detection.ts  # Configuración stealth
+```
 
-## License
+## ⚠️ Notas
 
-<!-- automd:contributors license=MIT -->
+- Usar responsablemente y respetando términos de servicio
+- Las credenciales se manejan via variables de entorno
+- El scraper incluye delays aleatorios para simular comportamiento humano
 
-Published under the [MIT](https://github.com/unjs/packageName/blob/main/LICENSE) license.
-Made by [community](https://github.com/unjs/packageName/graphs/contributors) 💛
-<br><br>
-<a href="https://github.com/unjs/packageName/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=unjs/packageName" />
-</a>
+## 📄 Licencia
 
-<!-- /automd -->
-
-<!-- automd:with-automd -->
-
----
-
-_🤖 auto updated with [automd](https://automd.unjs.io)_
-
-<!-- /automd -->
+MIT
