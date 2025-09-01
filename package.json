@@ -11,10 +11,15 @@
   "scripts": {
     "build": "obuild",
     "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.mjs",
     "lint": "eslint . && prettier -c .",
     "lint:fix": "automd && eslint . --fix && prettier -w .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "docker:build": "docker build -t bch-scraper .",
+    "docker:run": "docker run --env-file .env -v $(pwd)/output:/app/output bch-scraper",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
     "release": "changelogen --release && npm publish && git push --follow-tags"
   },
   "devDependencies": {

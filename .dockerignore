@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build outputs (will be copied from builder stage)
+dist/
+
+# Development files
+.git/
+.gitignore
+.env*
+.vscode/
+.idea/
+
+# Documentation
+README.md
+*.md
+
+# Test files
+test/
+tests/
+__tests__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Screenshots and downloads (generated at runtime)
+*.png
+*.jpg
+*.jpeg
+*.xls
+*.xlsx
+*.csv
+debug-*.png
+stealth.png
+descarga.*
+cartola-*.csv
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/

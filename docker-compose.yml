@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  bch-scraper:
+    build: .
+    container_name: bch-scraper
+    environment:
+      - BCH_RUT=${BCH_RUT}
+      - BCH_PASSWORD=${BCH_PASSWORD}
+      - NODE_ENV=production
+    volumes:
+      # Mount volume to persist CSV outputs
+      - ./output:/app/output
+    restart: unless-stopped
+    # Uncomment if you need to access logs
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: "10m"
+    #     max-file: "3"

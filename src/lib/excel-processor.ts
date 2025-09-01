@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import * as XLSX from 'xlsx'
 
@@ -186,7 +186,7 @@ export class ExcelProcessor {
   /**
    * Guarda el contenido CSV en un archivo
    */
-  private saveCsvFile(csvContent: string): string {
+    private saveCsvFile(csvContent: string): string {
     // Generar nombre con formato cartola-DDMMYYY--HHmmss.csv
     const now = new Date()
     const day = String(now.getDate()).padStart(2, '0')
@@ -197,8 +197,14 @@ export class ExcelProcessor {
     const seconds = String(now.getSeconds()).padStart(2, '0')
 
     const csvFileName = `cartola-${day}${month}${year}--${hours}${minutes}${seconds}.csv`
-    const csvPath = join(process.cwd(), csvFileName)
+    const outputDir = join(process.cwd(), 'output')
 
+    // Crear directorio output si no existe
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true })
+    }
+
+    const csvPath = join(outputDir, csvFileName)
     writeFileSync(csvPath, csvContent, 'utf8')
 
     return csvPath

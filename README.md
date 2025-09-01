@@ -21,6 +21,7 @@ Automatización para descargar y procesar cartolas del Banco de Chile, convirtie
 
 ```bash
 npm install
+npx playwright install chromium
 ```
 
 ## 🔧 Configuración
@@ -35,14 +36,23 @@ BCH_PASSWORD=tu_password
 ## 🏃‍♂️ Uso
 
 ```bash
-# Ejecutar scraper
+# Desarrollo local
 npm run dev
+
+# Producción local
+npm run build
+npm run start
+
+# Docker
+npm run docker:build
+npm run docker:run
+
+# Docker Compose
+npm run docker:up
+npm run docker:down
 
 # Formatear código
 npm run format
-
-# Verificar linting
-npm run lint
 ```
 
 ## 📊 Salida
