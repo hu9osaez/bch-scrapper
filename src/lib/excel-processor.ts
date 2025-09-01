@@ -1,7 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import * as XLSX from 'xlsx'
-import consola from 'consola'
 
 export interface ProcessedData {
   headers: string[]
@@ -20,32 +19,15 @@ export class ExcelProcessor {
    * Procesa el archivo Excel y convierte los datos a CSV
    * Busca la fila con 'Movimientos al' y extrae 100 registros desde columnas B-G
    */
-  async processExcelToCSV(): Promise<ProcessedData> {
+    async processExcelToCSV(): Promise<ProcessedData> {
     try {
-      consola.info(`📊 Procesando archivo Excel: ${this.filePath}`)
-
-      // Leer el archivo Excel
       const workbook = this.readExcelFile()
-
-      // Obtener la primera hoja
       const firstSheet = this.getFirstSheet(workbook)
-
-      // Buscar la fila con 'Movimientos al'
       const movimientosRowIndex = this.findMovimientosRow(firstSheet)
-
-      // Extraer headers desde la fila siguiente (columnas B-G)
       const headers = this.extractHeaders(firstSheet, movimientosRowIndex)
-
-      // Extraer 100 registros de datos
       const dataRows = this.extractDataRows(firstSheet, movimientosRowIndex, headers.length)
-
-      // Convertir a CSV
       const csvContent = this.convertToCSV(headers, dataRows)
-
-      // Guardar el archivo CSV
-      const csvPath = this.saveCsvFile(csvContent)
-
-      consola.success(`✅ Procesamiento completado. CSV guardado en: ${csvPath}`)
+      this.saveCsvFile(csvContent)
 
       return {
         headers,
@@ -54,23 +36,17 @@ export class ExcelProcessor {
       }
 
     } catch (error) {
-      consola.error('❌ Error procesando Excel:', error)
-      throw error
+      throw new Error(`Error procesando Excel: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
   /**
    * Lee el archivo Excel desde el sistema de archivos
    */
-  private readExcelFile(): XLSX.WorkBook {
+    private readExcelFile(): XLSX.WorkBook {
     try {
-      consola.info('📖 Leyendo archivo Excel...')
       const fileBuffer = readFileSync(this.filePath)
-      const workbook = XLSX.read(fileBuffer, { type: 'buffer' })
-
-      consola.info(`📋 Hojas encontradas: ${workbook.SheetNames.join(', ')}`)
-      return workbook
-
+      return XLSX.read(fileBuffer, { type: 'buffer' })
     } catch (error) {
       throw new Error(`Error leyendo archivo Excel: ${error instanceof Error ? error.message : String(error)}`)
     }
@@ -79,7 +55,7 @@ export class ExcelProcessor {
   /**
    * Obtiene la primera hoja del workbook
    */
-    private getFirstSheet(workbook: XLSX.WorkBook): XLSX.WorkSheet {
+      private getFirstSheet(workbook: XLSX.WorkBook): XLSX.WorkSheet {
     const firstSheetName = workbook.SheetNames[0]
     if (!firstSheetName) {
       throw new Error('No se encontraron hojas en el archivo Excel')
@@ -90,16 +66,13 @@ export class ExcelProcessor {
       throw new Error(`No se pudo acceder a la hoja: ${firstSheetName}`)
     }
 
-    consola.info(`📄 Procesando hoja: ${firstSheetName}`)
     return sheet
   }
 
   /**
    * Busca la fila que contiene 'Movimientos al'
    */
-  private findMovimientosRow(sheet: XLSX.WorkSheet): number {
-    consola.info('🔍 Buscando fila con "Movimientos al"...')
-
+    private findMovimientosRow(sheet: XLSX.WorkSheet): number {
     const range = XLSX.utils.decode_range(sheet['!ref'] || 'A1:Z100')
 
     for (let row = range.s.r; row <= range.e.r; row++) {
@@ -110,7 +83,6 @@ export class ExcelProcessor {
         if (cell && cell.v && typeof cell.v === 'string') {
           const cellValue = cell.v.toLowerCase()
           if (cellValue.includes('movimientos al')) {
-            consola.success(`✅ Encontrada fila "Movimientos al" en fila ${row + 1}`)
             return row
           }
         }
@@ -123,10 +95,8 @@ export class ExcelProcessor {
   /**
    * Extrae los headers desde la fila siguiente a 'Movimientos al' (columnas B-G)
    */
-  private extractHeaders(sheet: XLSX.WorkSheet, movimientosRowIndex: number): string[] {
-    consola.info('📋 Extrayendo headers desde columnas B-G...')
-
-    const headersRow = movimientosRowIndex + 1 // Fila siguiente
+    private extractHeaders(sheet: XLSX.WorkSheet, movimientosRowIndex: number): string[] {
+    const headersRow = movimientosRowIndex + 1
     const headers: string[] = []
 
     // Columnas B-G (índices 1-6)
@@ -138,17 +108,14 @@ export class ExcelProcessor {
       headers.push(headerValue)
     }
 
-    consola.info(`📊 Headers extraídos: ${headers.join(', ')}`)
     return headers
   }
 
   /**
    * Extrae 100 registros de datos desde la fila después de los headers
    */
-  private extractDataRows(sheet: XLSX.WorkSheet, movimientosRowIndex: number, numColumns: number): string[][] {
-    consola.info('📊 Extrayendo 100 registros de datos...')
-
-    const dataStartRow = movimientosRowIndex + 2 // Dos filas después de 'Movimientos al'
+    private extractDataRows(sheet: XLSX.WorkSheet, movimientosRowIndex: number, numColumns: number): string[][] {
+    const dataStartRow = movimientosRowIndex + 2
     const dataRows: string[][] = []
 
     for (let row = dataStartRow; row < dataStartRow + 100; row++) {
@@ -169,22 +136,17 @@ export class ExcelProcessor {
       }
     }
 
-    consola.info(`📈 Registros extraídos: ${dataRows.length}`)
     return dataRows
   }
 
   /**
    * Convierte headers y datos a formato CSV
    */
-  private convertToCSV(headers: string[], dataRows: string[][]): string {
-    consola.info('🔄 Convirtiendo a formato CSV...')
-
+    private convertToCSV(headers: string[], dataRows: string[][]): string {
     const csvLines: string[] = []
 
-    // Agregar headers
     csvLines.push(this.escapeCSVRow(headers))
 
-    // Agregar datos
     for (const row of dataRows) {
       csvLines.push(this.escapeCSVRow(row))
     }
@@ -210,11 +172,10 @@ export class ExcelProcessor {
   /**
    * Guarda el contenido CSV en un archivo
    */
-  private saveCsvFile(csvContent: string): string {
+    private saveCsvFile(csvContent: string): string {
     const csvFileName = this.filePath.replace(/\.(xlsx?|xls)$/i, '.csv')
     const csvPath = join(process.cwd(), csvFileName)
 
-    consola.info(`💾 Guardando CSV en: ${csvPath}`)
     writeFileSync(csvPath, csvContent, 'utf8')
 
     return csvPath
